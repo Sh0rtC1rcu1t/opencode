@@ -7,7 +7,7 @@
     "dev": "astro dev",
     "dev:remote": "VITE_API_URL=https://api.opencode.ai astro dev",
     "start": "astro dev",
-    "build": "OPENCODE_SEPARATE_PAGEFIND=1 astro build && pagefind --site dist/client --output-subdir docs/pagefind",
+    "build": "OPENCODE_SEPARATE_PAGEFIND=1 astro build && pagefind --site dist/client/docs",
     "preview": "astro preview",
     "astro": "astro"
   },
