@@ -1,0 +1,58 @@
+diff --git a/dist/user-components/tabs-processor.js b/dist/user-components/tabs-processor.js
+--- a/dist/user-components/tabs-processor.js
++++ b/dist/user-components/tabs-processor.js
+@@ -1,4 +1,4 @@
+-import { htmlToHast } from "satteri";
++import { htmlToHast } from "./html-to-hast.js";
+ import { CONTINUE, SKIP, visit } from "unist-util-visit";
+ import { select } from "hast-util-select";
+ import { toHtml } from "hast-util-to-html";
+diff --git a/dist/user-components/steps-processor.js b/dist/user-components/steps-processor.js
+--- a/dist/user-components/steps-processor.js
++++ b/dist/user-components/steps-processor.js
+@@ -1,5 +1,5 @@
+ import { AstroError } from "astro/errors";
+-import { htmlToHast } from "satteri";
++import { htmlToHast } from "./html-to-hast.js";
+ import { toHtml } from "hast-util-to-html";
+ import { format } from "hast-util-format";
+ // src/user-components/steps-processor.ts
+diff --git a/dist/user-components/file-tree-processor.js b/dist/user-components/file-tree-processor.js
+--- a/dist/user-components/file-tree-processor.js
++++ b/dist/user-components/file-tree-processor.js
+@@ -1,7 +1,7 @@
+ import { Icons } from "../components-internals/Icons.js";
+ import { definitions } from "./file-tree-icons.js";
+ import { AstroError } from "astro/errors";
+-import { htmlToHast } from "satteri";
++import { htmlToHast } from "./html-to-hast.js";
+ import { CONTINUE, SKIP, visit } from "unist-util-visit";
+ import { toString } from "hast-util-to-string";
+ import { h, s } from "hastscript";
+diff --git a/dist/user-components/html-to-hast.js b/dist/user-components/html-to-hast.js
+new file mode 100644
+--- /dev/null
++++ b/dist/user-components/html-to-hast.js
+@@ -0,0 +1,10 @@
++import { fromHtml } from "hast-util-from-html";
++
++// Cloudflare Workers cannot load Satteri's native Node binding. Keep the
++// runtime component transforms on the portable HTML parser used by remark.
++export function htmlToHast(html, options) {
++  if (options?.space !== "svg") return fromHtml(html, options);
++  const tree = fromHtml(`<svg>${html}</svg>`, { fragment: true });
++  const svg = tree.children.find((node) => node.type === "element" && node.tagName === "svg");
++  return { type: "root", children: svg?.children ?? [] };
++}
+diff --git a/dist/integrations/pagefind.js b/dist/integrations/pagefind.js
+--- a/dist/integrations/pagefind.js
++++ b/dist/integrations/pagefind.js
+@@ -3,6 +3,8 @@
+ // src/integrations/pagefind.ts
+ /** Run Pagefind to generate search index files based on the build output directory. */
+ async function starlightPagefind({ dir, logger: starlightLogger }) {
++	// The project build runs the CLI after Astro releases its bundler heap.
++	if (process.env.OPENCODE_SEPARATE_PAGEFIND === "1") return;
+ 	const logger = starlightLogger.fork("starlight:pagefind");
+ 	const options = {
+ 		dir,

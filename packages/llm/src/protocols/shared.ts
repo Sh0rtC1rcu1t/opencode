@@ -237,13 +237,14 @@ export const errorText = (error: unknown) => {
  * `decodeChunk` sees one JSON string per element. The SSE channel emits a
  * `Retry` control event on its error channel; we drop it here (we don't
  * implement client-driven retries) so the public error channel stays
- * `LLMError`.
+ * `LLMError`. Oversized events fail as typed provider output errors.
  */
 export const sseFraming = (bytes: Stream.Stream<Uint8Array, LLMError>): Stream.Stream<string, LLMError> =>
   bytes.pipe(
     Stream.decodeText(),
     Stream.pipeThroughChannel(Sse.decode()),
     Stream.catchTag("Retry", () => Stream.empty),
+    Stream.catchTag("SseError", (error) => Stream.fail(eventError("SSE", error.message))),
     Stream.filter((event) => event.data.length > 0 && event.data !== "[DONE]"),
     Stream.map((event) => event.data),
   )

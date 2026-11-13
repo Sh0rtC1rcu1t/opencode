@@ -28,7 +28,7 @@ export namespace FSUtil {
     readonly type: "file" | "directory" | "symlink" | "other"
   }
 
-  export interface Interface extends FileSystem.FileSystem {
+  export interface Interface extends Omit<FileSystem.FileSystem, "glob"> {
     readonly isDir: (path: string) => Effect.Effect<boolean>
     readonly isFile: (path: string) => Effect.Effect<boolean>
     readonly existsSafe: (path: string) => Effect.Effect<boolean>

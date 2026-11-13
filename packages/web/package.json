@@ -7,19 +7,20 @@
     "dev": "astro dev",
     "dev:remote": "VITE_API_URL=https://api.opencode.ai astro dev",
     "start": "astro dev",
-    "build": "astro build",
+    "build": "OPENCODE_SEPARATE_PAGEFIND=1 astro build && pagefind --site dist/client --output-subdir docs/pagefind",
     "preview": "astro preview",
     "astro": "astro"
   },
   "dependencies": {
     "@astrojs/cloudflare": "14.3.0",
-    "@astrojs/markdown-remark": "7.3.6",
+    "@astrojs/markdown-remark": "7.3.0",
     "@astrojs/solid-js": "7.1.2",
     "@astrojs/starlight": "0.42.10",
     "@fontsource/ibm-plex-mono": "5.2.5",
     "@shikijs/transformers": "3.20.0",
     "@solid-primitives/resize-observer": "2.1.5",
     "@types/luxon": "catalog:",
+    "@opencode-ai/sdk": "workspace:*",
     "ai": "catalog:",
     "astro": "7.3.3",
     "diff": "catalog:",
@@ -33,14 +34,17 @@
     "shiki": "catalog:",
     "solid-js": "1.9.13",
     "toolbeam-docs-theme": "0.4.8",
-    "vscode-languageserver-types": "3.17.5"
+    "vscode-languageserver-types": "3.17.5",
+    "hast-util-from-html": "2.0.3"
   },
   "devDependencies": {
     "opencode": "workspace:*",
     "@types/node": "catalog:",
     "@astrojs/check": "0.9.6",
     "typescript": "catalog:",
-    "wrangler": "4.157.0"
+    "wrangler": "4.157.0",
+    "pagefind": "1.5.2",
+    "@types/bun": "catalog:"
   },
   "engines": {
     "node": ">=22.23.4"

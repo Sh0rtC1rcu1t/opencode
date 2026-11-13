@@ -5,12 +5,10 @@ import { IconArrowDown } from "./icons"
 import { IconOpencode } from "./icons/custom"
 import { ShareI18nProvider, formatCurrency, formatNumber, normalizeLocale } from "./share/common"
 import styles from "./share.module.css"
-import type { MessageV2 } from "opencode/session/message-v2"
+import { toolInput } from "./share/types"
+import type { MessageWithParts, SharedPart, SharedSession } from "./share/types"
 import type { Message } from "opencode/session/message"
-import type { Session } from "opencode/session/index"
 import { Part, ProviderIcon } from "./share/part"
-
-type MessageWithParts = MessageV2.Info & { parts: MessageV2.Part[] }
 
 type Status = "disconnected" | "connecting" | "connected" | "error" | "reconnecting"
 
@@ -41,7 +39,7 @@ function getStatusText(status: [Status, string?], messages: Record<string, strin
 export default function Share(props: {
   id: string
   api: string
-  info: Session.Info
+  info: SharedSession
   messages: { locale: string } & Record<string, string>
 }) {
   let lastScrollY = 0
@@ -58,7 +56,7 @@ export default function Share(props: {
   const [isNearBottom, setIsNearBottom] = createSignal(false)
 
   const [store, setStore] = createStore<{
-    info?: Session.Info
+    info?: SharedSession
     messages: Record<string, MessageWithParts>
   }>({
     info: {
@@ -528,7 +526,7 @@ export function fromV1(v1: Message.Info): MessageWithParts {
       providerID: v1.metadata.assistant!.providerID,
       mode: "build",
       error: v1.metadata.error,
-      parts: v1.parts.flatMap((part, index): MessageV2.Part[] => {
+      parts: v1.parts.flatMap((part, index): SharedPart[] => {
         const base = {
           id: index.toString(),
           messageID: v1.id,
@@ -571,7 +569,7 @@ export function fromV1(v1: Message.Info): MessageWithParts {
                 if (part.toolInvocation.state === "call") {
                   return {
                     status: "running",
-                    input: part.toolInvocation.args,
+                    input: toolInput(part.toolInvocation.args),
                     time: {
                       start: time.start,
                     },
@@ -581,7 +579,7 @@ export function fromV1(v1: Message.Info): MessageWithParts {
                 if (part.toolInvocation.state === "result") {
                   return {
                     status: "completed",
-                    input: part.toolInvocation.args,
+                    input: toolInput(part.toolInvocation.args),
                     output: part.toolInvocation.result,
                     title,
                     time,
@@ -611,7 +609,7 @@ export function fromV1(v1: Message.Info): MessageWithParts {
       time: {
         created: v1.metadata.time.created,
       },
-      parts: v1.parts.flatMap((part, index): MessageV2.Part[] => {
+      parts: v1.parts.flatMap((part, index): SharedPart[] => {
         const base = {
           id: index.toString(),
           messageID: v1.id,

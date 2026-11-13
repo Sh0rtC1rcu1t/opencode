@@ -315,7 +315,7 @@ describe("ToolRegistry", () => {
                 encode: SchemaGetter.transformOrFail((value) =>
                   value === "valid"
                     ? Effect.succeed(true)
-                    : Effect.fail(new SchemaIssue.InvalidValue(Option.some(value), { message: "invalid output" })),
+                    : Effect.fail(new SchemaIssue.InvalidValue({ message: "invalid output" })),
                 ),
               }),
             ),

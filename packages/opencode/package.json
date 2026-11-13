@@ -70,7 +70,7 @@
     "@ai-sdk/openai": "3.0.84",
     "@ai-sdk/openai-compatible": "2.0.41",
     "@ai-sdk/perplexity": "3.0.26",
-    "@ai-sdk/provider": "3.0.12",
+    "@ai-sdk/provider": "3.0.15",
     "@ai-sdk/togetherai": "2.0.41",
     "@ai-sdk/vercel": "2.0.39",
     "@ai-sdk/xai": "3.0.102",
@@ -150,7 +150,8 @@
     "ws": "8.21.0",
     "xdg-basedir": "5.1.0",
     "yargs": "18.0.0",
-    "zod": "catalog:"
+    "zod": "catalog:",
+    "@ai-sdk/provider-utils": "4.0.46"
   },
   "overrides": {
     "drizzle-orm": "catalog:"

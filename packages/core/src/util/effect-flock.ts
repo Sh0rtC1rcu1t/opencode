@@ -46,8 +46,7 @@ export namespace EffectFlock {
   const MAX_DELAY_MS = 2_000
   const HEARTBEAT_MS = Math.max(100, Math.floor(STALE_MS / 3))
 
-  const retrySchedule = Schedule.exponential(BASE_DELAY_MS, 1.7).pipe(
-    Schedule.either(Schedule.spaced(MAX_DELAY_MS)),
+  const retrySchedule = Schedule.min([Schedule.exponential(BASE_DELAY_MS, 1.7), Schedule.spaced(MAX_DELAY_MS)]).pipe(
     Schedule.jittered,
     Schedule.while((meta) => meta.elapsed < TIMEOUT_MS),
   )
